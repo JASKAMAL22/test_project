@@ -1,0 +1,35 @@
+name: Manual Python and PowerShell Workflows
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: The parameter to pass to the Python and PowerShell scripts.
+        required: true
+        type: string
+      
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Run Python script
+        run: python main.py ${{ github.event.inputs.name }}
+
+  powershell:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v1
+        - name: Script
+          run: .\script.ps1 -Parameter1 ${{ inputs.name }}
+          shell: pwsh
