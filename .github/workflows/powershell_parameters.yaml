@@ -1,0 +1,19 @@
+name: Shell Parameters
+on:
+    workflow_dispatch:
+        inputs:
+            name:
+                type: string
+                description: The parameter to pass to the PowerShell script.
+
+jobs:
+    build:
+      name: Run Script
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v1
+        - name: Script
+          run: .\script.ps1 -Parameter1 ${{ inputs.name }}
+          shell: pwsh
+          env:
+            MyVariable: 'Github Actions !'
