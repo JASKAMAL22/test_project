@@ -10,3 +10,5 @@ jobs:
         - name: Script
           run: .\script.ps1 -Parameter1 'Hi'
           shell: pwsh
+          env:
+            MyVariable: 'Github Actions !'
