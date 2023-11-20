@@ -5,7 +5,7 @@ on:
     tags:
       - '*'
     branches:
-      - release
+      - main
 
 env:
   COMMIT_ID: ${{ github.sha }}
