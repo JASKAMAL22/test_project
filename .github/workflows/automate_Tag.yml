@@ -1,0 +1,43 @@
+name: Tag Release
+
+on:
+  create:
+    tags:
+      - '*'
+    branches:
+      - release
+
+env:
+  COMMIT_ID: ${{ github.sha }}
+  ch_file: ${{ github.sha }}
+  
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: GetCommitId
+        run: |
+          #$tag = $env:GITHUB_REF -replace 'refs/tags/', ''
+          #$tag = $env:GITHUB_REF.Split('/')[2]
+          #$tag = $env:GITHUB_REF_NAME
+          pwsh -File ./.github/workflows/getcommitid.ps1 --SourceTag ${{ github.ref_name }}
+          #pwsh -File ./.github/workflows/getcommitid.ps1 -SourceTag ${{ steps.tag.outputs.tag }}
+          echo "COMMIT_ID=$commitid" >> $GITHUB_ENV
+        shell: pwsh
+
+      - name: print commit id
+        run: echo "COMMIT ID IS ${{ env.COMMIT_ID }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Run Python script
+        run: python ./.github/workflows/matillion_api_call.py ${{ vars.SVC_MATILLION_USERNAME }}  ${{ secrets.SVC_MATILLION_PASSWORD }} ${{ vars.MATILLION_PROJECT }} ${{ vars.MATILLION_GROUP }} ${{ vars.MATILLION_VERSION }} ${{ vars.MATILLION_INSTANCE }} ${{ vars.SVC_REPOS_EMAIL}} ${{secrets.SVC_REPOS_PASSWORD}} ${{ env.COMMIT_ID }} ${{ env.ch_file }}
+
